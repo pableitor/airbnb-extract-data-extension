@@ -1,35 +1,3 @@
-/* // OPCIONAL: Autoejecutar funcion anonima al cargar la página sin botón
-(function () {
-  const delay = 2000; // Por si Airbnb tarda en renderizar
-
-  setTimeout(() => {
-    const allSpans = Array.from(document.querySelectorAll("div, span")).filter(el =>
-      el.textContent.trim() === "Estancia en curso" || el.textContent.trim() === "Confirmada"
-    );
-
-    if (allSpans.length === 0) return;
-
-    const container = allSpans[0].closest("section") || allSpans[0].parentElement;
-    const texts = Array.from(container.querySelectorAll("*"))
-      .map(el => el.textContent.trim())
-      .filter(txt => txt.length > 5);
-
-    const index = texts.findIndex(t => t === "Estancia en curso" || t === "Confirmada");
-
-    const nombreInquilino = texts[index + 2] || "¿?";
-    const alojamiento = texts[index + 6] || "¿?";
-    const fechas = texts[index + 7] || "¿?";
-
-    const textoFinal = `🏡 Alojamiento: ${alojamiento}\n🧍 Inquilino: ${nombreInquilino}\n📅 Fechas: ${fechas}`;
-
-    navigator.clipboard.writeText(textoFinal).then(() => {
-      console.log("✅ Datos copiados al portapapeles:", textoFinal);
-    });
-      // Enviamos los datos al popup
-    chrome.runtime.sendMessage({ tipo: "datosAirbnb", textoFinal });
-  }, delay);
-})(); */
-
 
 function extraerDesdeTextoPlano() {
   console.log("[content.js] ⏳ Analizando texto completo...");
@@ -54,7 +22,13 @@ function extraerDesdeTextoPlano() {
   navigator.clipboard.writeText(resumen).then(() => {
     console.log("✅ Datos copiados al portapapeles:", resumen);
   });
-
+  chrome.storage.local.set({
+    reservaDatos: {
+      nombre: nombre,
+      alojamiento: alojamiento,
+      fechas: fechas
+    }
+  });
   chrome.runtime.sendMessage({ tipo: "datosAirbnb", resumen });
 }
 
